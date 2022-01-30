@@ -60,4 +60,4 @@ $ yarn db:seed
 
 ## Swagger docs
 
-- Api - [Swagger api docs](http://localhost:3000/api/)
+- Api - [Swagger api docs](http://localhost:8000/api/)

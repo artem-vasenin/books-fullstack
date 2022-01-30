@@ -26,6 +26,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     { src: '@/plugins/vuex-persist', ssr: true },
+    '~/plugins/axios',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -36,6 +37,7 @@ export default {
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
     '@nuxtjs/axios',
+    ['@nuxtjs/dotenv', { filename: '.env' }],
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
