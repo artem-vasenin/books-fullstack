@@ -18,6 +18,7 @@ export const actions = {
       loading: true,
     }, {root: true});
     commit('setField', {name: 'authors', value: authors});
+    return authors;
   },
   async getById({commit, dispatch}, id) {
     const author = await dispatch('ax', {
@@ -26,6 +27,7 @@ export const actions = {
       loading: true,
     }, {root: true});
     commit('setField', {name: 'author', value: author});
+    return author;
   },
   setForm({commit, dispatch}, form) {
     dispatch("clearForm");

@@ -40,20 +40,17 @@ import AuthorForm from "../../components/authors/forms/Form";
 export default {
   name: "AuthorsList",
   components: { AuthorForm, ListItem },
-  // SSR
-  async fetch({store}) {
-    if (store.getters['authors/authors'].length === 0) {
-      await store.dispatch('authors/getList');
-    }
+  async asyncData({store}) {
+    const authors = await store.dispatch('authors/getList');
+    return { authors };
   },
-  // SPA
   data() {
     return {
       isEdit: false,
+      authors: [],
     };
   },
   computed: {
-    authors() { return this.$store.getters['authors/authors'] || []; },
     user() { return this.$store.getters['user'] || null; },
     form() { return this.$store.getters['authors/form']; },
   },

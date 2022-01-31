@@ -10,13 +10,23 @@ export const mutations = {
 };
 
 export const actions = {
-  async getList({commit}) {
-    // const authors = await this.$axios.$get('http://45.141.76.134:8000/api/author');
-    // commit('setField', {name: 'authors', value: authors});
+  async getList({commit, dispatch}) {
+    const categories = await dispatch('ax', {
+      url: 'category',
+      method: 'get',
+      loading: true
+    }, {root: true});
+    commit('setField', {name: 'categories', value: categories});
+    return categories;
   },
-  async getById({commit}, id) {
-    // const author = await this.$axios.$get(`http://45.141.76.134:8000/api/author/${id}`);
-    // commit('setField', {name: 'author', value: author});
+  async getById({commit, dispatch}, alias) {
+    const category = await dispatch('ax', {
+      url: `category/${alias}`,
+      method: 'get',
+      loading: true
+    }, {root: true});
+    commit('setField', {name: 'category', value: category});
+    return category
   }
 };
 

@@ -1,7 +1,8 @@
 export const state = () => ({
   user: null,
   token: null,
-  loading: false,
+  loading: [],
+  snackbar: null,
 });
 
 export const mutations = {
@@ -12,25 +13,49 @@ export const mutations = {
 
 export const actions = {
   /** Установка значения активности лоадера */
-  setLoader({commit}, payload) {
-    commit('setField', { name: 'loading', value: payload });
+  setLoader({commit, state}, payload) {
+    if (payload.status) {
+      const value = !state.loading.includes(payload.id) ? [...state.loading, payload.id] : state.loading;
+      commit('setField', { name: 'loading', value });
+      console.log('loading', state.loading);
+    } else {
+      const value = state.loading.filter(l => l !== payload.id);
+      commit('setField', { name: 'loading', value });
+      console.log('loading', state.loading);
+    }
+  },
+  /** Установка извещения */
+  setSnackbar({commit}, payload) {
+    commit('setField', { name: 'snackbar', value: payload });
+  },
+  /** Показ сообщения об ошибке */
+  showErrorMessage({dispatch}, content) {
+    dispatch('setSnackbar', { timeout: 6000, type: 'error', content });
+    setTimeout(() => { dispatch('setSnackbar', null); }, 6000);
+  },
+  /** Показ сообщения об успехе */
+  showSuccessMessage({dispatch}, content) {
+    dispatch('setSnackbar', { timeout: 6000, type: 'success', content });
+    setTimeout(() => { dispatch('setSnackbar', null); }, 6000);
   },
   /** Экшин для отправки запросов на сервер */
   async ax({ state, dispatch, commit }, payload) {
     const { url, data, params, method } = payload;
+    const id = (Date.now() + Math.floor(Math.random() * 999)).toString();
     return new Promise((resolve, reject) => {
       state.token && this.$api.setToken(state.token, 'Bearer');
-      payload.loading && commit('setField', { name: 'loading', value: true });
+      payload.loading && dispatch('setLoader', { id, status: true });
       this.$api[method](url, data || null, params ? { params } : null)
         .then(({data}) => {
           if (!data) reject(new Error('Ошибка получения данных'));
           resolve(data);
         })
         .catch((e) => {
+          dispatch('showErrorMessage', e);
           reject(e);
         })
         .finally(() => {
-          payload.loading && commit('setField', { name: 'loading', value: false });
+          payload.loading && dispatch('setLoader', { id, status: false });
         });
     });
   },
@@ -69,5 +94,6 @@ export const actions = {
 export const getters = {
   user: state => state.user,
   token: state => state.token,
-  loading: state => state.loading,
+  loading: state => state.loading && state.loading.length,
+  snackbar(state) { return state.snackbar; },
 };

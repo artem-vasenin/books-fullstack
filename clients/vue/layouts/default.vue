@@ -11,12 +11,39 @@
       <nuxt-link v-if="!user" no-prefetch to="/auth/login" class="ml-6 menu-link" active-class="active">Вход</nuxt-link>
       <a v-else class="ml-6 menu-link" @click.prevent="logout">Выход</a>
     </v-app-bar>
+
+    <!-- Progress bar -->
+    <v-progress-linear
+      v-show="loading"
+      :indeterminate="true"
+      class="page-loader"
+      color="primary"
+      style="z-index: 6;"
+    />
+    <!-- /Progress bar -->
+
     <v-main>
       <Nuxt />
     </v-main>
+
     <v-footer :absolute="!fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
+
+    <!-- Notifications -->
+    <v-snackbar
+      v-if="snackbar"
+      :multi-line="true"
+      :timeout="snackbar.timeout"
+      :value="true"
+      center
+      bottom
+      :color="snackbar.type"
+      outlined
+    >
+      {{ snackbar.content }}
+    </v-snackbar>
+    <!-- /Notifications -->
   </v-app>
 </template>
 
@@ -37,6 +64,11 @@ export default {
   },
   computed: {
     user() { return this.$store.getters.user || null; },
+    loading() {
+      console.log('loading c', this.$store.getters['loading']);
+      return this.$store.getters['loading'];
+    },
+    snackbar() { return this.$store.getters['snackbar'] || null; },
   },
   methods: {
     logout() { this.$store.dispatch('logout'); },
